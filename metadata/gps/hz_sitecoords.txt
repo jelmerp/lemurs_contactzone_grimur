@@ -1,0 +1,8 @@
+site	species	hzproj_type	hzproj_type2	lat	long
+Mangatsiaka	mhyb	hybridzone	hybridzone	-24.966	46.5574
+Tsimelahy	mhyb	hybridzone	hybridzone	-24.9556	46.6193
+Ambatoabo	mmur	mmur	pure	-24.819	46.66959
+Hazofotsy	mgri	mgri	pure	-24.8356	46.53769
+Tsimanampetsotsa	mgri	mgri	pure	-24.14543	43.82909
+Manamby	mmur	mmur	pure	-20.43333	44.83333
+Mandena	mgan	mmur	pure	-24.94833	46.995

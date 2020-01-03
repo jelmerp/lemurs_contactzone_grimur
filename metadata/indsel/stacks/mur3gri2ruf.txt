@@ -1,0 +1,16 @@
+mgan007	mur-E
+mgan008	mur-E
+mgan014	mur-E
+mgri044	gri-W
+mgri045	gri-W
+mgri051	gri-W
+mgri088	gri-C
+mgri093	gri-C
+mgri104	gri-C
+mmur001	mur-W
+mmur006	mur-W
+mmur009	mur-W
+mmur052	mur-C
+mmur056	mur-C
+mmur066	mur-C
+mruf008	mruf
