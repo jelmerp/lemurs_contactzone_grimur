@@ -4,3 +4,10 @@
 .Ruserdata
 scripts/old/
 scripts/misc/
+figs/
+ms/
+misc/
+analyses/
+seqdata/
+metadata/indsel/
+metadata/*xls
