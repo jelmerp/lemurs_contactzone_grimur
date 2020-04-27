@@ -17,7 +17,7 @@ GPHOCS_LOCUS_DIR=analyses/gphocs/input_prep.$FILE_ID
 GPHOCS_INPUT_DIR=analyses/gphocs/input/
 
 sbatch -p yoderlab,common,scavenger -o slurm.gphocs1createLoci.$FILE_ID.txt \
-	/datacommons/yoderlab/users/jelmer/scripts/gphocs/gphocs_1_createLoci.sh $FILE_ID $FASTA_DIR $GPHOCS_LOCUS_DIR $GPHOCS_INPUT_DIR
+	/datacommons/yoderlab/users/jelmer/scripts/genomics/gphocs/gphocs_1_createLoci.sh $FILE_ID $FASTA_DIR $GPHOCS_LOCUS_DIR $GPHOCS_INPUT_DIR
 
 ## If nr of loci given in first line of file is 0, because ls didn't work (too many files) -- see below.
 
@@ -40,7 +40,7 @@ do
 	echo $CFILE
 	
 	sbatch -p yoderlab,common,scavenger -N 1 -n $NCORES -o gphocs_logfiles/slurm.gphocs_run.$(basename $CFILE).$(date +%Y%m%d-%H%M) --exclude=dcc-biostat-01,dcc-biostat-02,dcc-biostat-03 \
-	/datacommons/yoderlab/users/jelmer/scripts/gphocs/gphocs_4_run.sh $CFILE $NCORES $GPHOCS_COPY
+	/datacommons/yoderlab/users/jelmer/scripts/genomics/gphocs/gphocs_4_run.sh $CFILE $NCORES $GPHOCS_COPY
 	
 	printf "\n"
 done
@@ -50,7 +50,7 @@ done
 ################################################################################
 ################################################################################
 # rsync -avr --no-perms /home/jelmer/Dropbox/sc_lemurs/hybridzone/scripts/ jwp37@dcc-slogin-02.oit.duke.edu:/datacommons/yoderlab/users/jelmer/hybridzone/scripts/
-# rsync -avr --no-perms /home/jelmer/Dropbox/sc_lemurs/scripts/ jwp37@dcc-slogin-02.oit.duke.edu:/datacommons/yoderlab/users/jelmer/scripts/
+# rsync -avr --no-perms /home/jelmer/Dropbox/scripts/genomics/ jwp37@dcc-slogin-02.oit.duke.edu:/datacommons/yoderlab/users/jelmer/scripts/genomics/
 
 # rsync -avr /home/jelmer/Dropbox/sc_lemurs/hybridzone/analyses/gphocs/controlfiles/ jwp37@dcc-slogin-02.oit.duke.edu:/datacommons/yoderlab/users/jelmer/hybridzone/analyses/gphocs/controlfiles/
 

@@ -7,7 +7,7 @@ fileID <- 'r03.all.mac3.FS6' # VCF name
 ID.type <- 'ID.short' # "ID" (mmur001_r01_p1b01) or "ID.short" (mmur001)
 
 ## Other scripts:
-source('/home/jelmer/Dropbox/sc_lemurs/scripts/PCA/PCA_R_fun.R')
+source('/home/jelmer/Dropbox/scripts/genomics/PCA/PCA_R_fun.R')
 
 ## Files and dirs:
 setwd(basedir)

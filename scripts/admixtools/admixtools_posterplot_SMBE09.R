@@ -2,7 +2,7 @@
 ##### SET-UP #####
 ################################################################################
 setwd('/home/jelmer/Dropbox/sc_lemurs/hybridzone/')
-source('/home/jelmer/Dropbox/sc_lemurs/scripts/admixtools/admixtools_plot_fun.R')
+source('/home/jelmer/Dropbox/scripts/genomics/admixtools/admixtools_plot_fun.R')
 library(tidyverse)
 library(ggpubr)
 library(cowplot)

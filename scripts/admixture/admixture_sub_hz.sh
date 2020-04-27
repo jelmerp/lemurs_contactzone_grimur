@@ -17,14 +17,14 @@ do
 	bcftools query -l $VCF_DIR/$FILE_ID.vcf.gz | grep -v "mruf" > $INDFILE # Send list of inds minus "mruf" (outgroup) to separate textfile
 
 	sbatch -p yoderlab,common,scavenger --mem 8G -o slurm.admixture.pip.$FILE_ID \
-	/datacommons/yoderlab/users/jelmer/scripts/admixture/admixture_pip.sh $FILE_ID $VCF_DIR $PLINK_DIR $OUTDIR $MAF $LD_MAX $NCORES $INDFILE
+	/datacommons/yoderlab/users/jelmer/scripts/genomics/admixture/admixture_pip.sh $FILE_ID $VCF_DIR $PLINK_DIR $OUTDIR $MAF $LD_MAX $NCORES $INDFILE
 done
 
 
 ################################################################################
 ################################################################################
 # rsync -avr --no-perms /home/jelmer/Dropbox/sc_lemurs/hybridzone/scripts/ jwp37@dcc-slogin-02.oit.duke.edu:/datacommons/yoderlab/users/jelmer/hybridzone/scripts/
-# rsync -avr --no-perms /home/jelmer/Dropbox/sc_lemurs/scripts/ jwp37@dcc-slogin-02.oit.duke.edu:/datacommons/yoderlab/users/jelmer/scripts/
+# rsync -avr --no-perms /home/jelmer/Dropbox/scripts/genomics/ jwp37@dcc-slogin-02.oit.duke.edu:/datacommons/yoderlab/users/jelmer/scripts/genomics/
 # rsync -avr --no-perms /home/jelmer/Dropbox/sc_lemurs/hybridzone/metadata/ jwp37@dcc-slogin-02.oit.duke.edu:/datacommons/yoderlab/users/jelmer/hybridzone/metadata/
 
 # rsync -avr jwp37@dcc-slogin-02.oit.duke.edu:/datacommons/yoderlab/users/jelmer/hybridzone/analyses/admixture/output/* /home/jelmer/Dropbox/sc_lemurs/hybridzone/analyses/admixture/output/

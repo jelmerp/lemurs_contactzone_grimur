@@ -12,13 +12,13 @@ for FILE_ID in ${FILE_IDS[@]}
 do
 	echo -e "\n##### File ID: $FILE_ID"
 	sbatch -p yoderlab,common,scavenger --mem=${MEM}G -o slurm.splitstree.pip.$FILE_ID \
-	/datacommons/yoderlab/users/jelmer/scripts/trees/splitstree_pip.sh $FILE_ID $VCF_DIR $FASTA_DIR $NEXUS_DIR $OUTDIR $MEM
+	/datacommons/yoderlab/users/jelmer/scripts/genomics/trees/splitstree_pip.sh $FILE_ID $VCF_DIR $FASTA_DIR $NEXUS_DIR $OUTDIR $MEM
 done
 
 
 ################################################################################
 ################################################################################
-# rsync -avr /home/jelmer/Dropbox/sc_lemurs/scripts/* jwp37@dcc-slogin-02.oit.duke.edu:/datacommons/yoderlab/users/jelmer/scripts/
+# rsync -avr /home/jelmer/Dropbox/scripts/genomics/* jwp37@dcc-slogin-02.oit.duke.edu:/datacommons/yoderlab/users/jelmer/scripts/genomics/
 # rsync -avr jwp37@dcc-slogin-02.oit.duke.edu:/datacommons/yoderlab/users/jelmer/proj/hybridzone/analyses/trees/splitstree/output/* /home/jelmer/Dropbox/sc_lemurs/proj/hybridzone/analyses/trees/splitstree/output
 
 ################################################################################

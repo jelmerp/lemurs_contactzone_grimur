@@ -2,8 +2,8 @@
 ##### SET-UP #####
 ################################################################################
 setwd('/home/jelmer/Dropbox/sc_lemurs/hybridzone/analyses/trees/treemix/')
-source('/home/jelmer/Dropbox/sc_lemurs/scripts/trees/treemix_plotting_funcs.R') # Script that comes with Treemix
-source('/home/jelmer/Dropbox/sc_lemurs/scripts/trees/treemix_plotFun.R') # My script
+source('/home/jelmer/Dropbox/scripts/genomics/trees/treemix_plotting_funcs.R') # Script that comes with Treemix
+source('/home/jelmer/Dropbox/scripts/genomics/trees/treemix_plotFun.R') # My script
 library(tidyverse)
 library(ggpubr)
 library(cowplot)

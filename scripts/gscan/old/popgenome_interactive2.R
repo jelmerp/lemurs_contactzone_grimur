@@ -26,7 +26,7 @@
 setwd('/home/jelmer/Dropbox/sc_lemurs/hybridzone/')
 library(tidyverse)
 library(PopGenome)
-source('/home/jelmer/Dropbox/sc_lemurs/scripts/gscan/popgenome_fun.R')
+source('/home/jelmer/Dropbox/scripts/genomics/gscan/popgenome_fun.R')
 
 ## Variables:
 fileID_in <- 'r03.all.mac1.FS6'

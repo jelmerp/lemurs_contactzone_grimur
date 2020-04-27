@@ -1,6 +1,6 @@
 ## Set-up:
 setwd('/home/jelmer/Dropbox/sc_lemurs/hybridzone/analyses/gphocs/')
-source('/home/jelmer/Dropbox/sc_lemurs/scripts/gphocs/gphocs_3_prepRun_fun.R')
+source('/home/jelmer/Dropbox/scripts/genomics/gphocs/gphocs_3_prepRun_fun.R')
 
 ## Focal file ID:
 fileID <- 'hz.mur3gri2c'

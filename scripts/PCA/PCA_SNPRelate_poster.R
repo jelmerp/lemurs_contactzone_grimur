@@ -2,7 +2,7 @@
 ##### SET-UP #####
 ################################################################################
 library(tidyverse)
-source('/home/jelmer/Dropbox/sc_lemurs/scripts/PCA/PCA_R_fun.R')
+source('/home/jelmer/Dropbox/scripts/genomics/PCA/PCA_R_fun.R')
 setwd('/home/jelmer/Dropbox/sc_lemurs/hybridzone/')
 
 ## Vars:

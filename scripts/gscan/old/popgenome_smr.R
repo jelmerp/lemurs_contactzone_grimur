@@ -3,7 +3,7 @@
 ################################################################################
 setwd('/home/jelmer/Dropbox/sc_lemurs/hybridzone/')
 library(tidyverse)
-source('/home/jelmer/Dropbox/sc_lemurs/scripts/gscan/manplots_fun.R')
+source('/home/jelmer/Dropbox/scripts/genomics/gscan/manplots_fun.R')
 
 ## FileID:
 fileID <- 'r03.all.mac1.FS6'

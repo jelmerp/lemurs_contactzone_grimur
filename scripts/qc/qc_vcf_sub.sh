@@ -1,4 +1,4 @@
-VCF_DIR=/work/jwp37/hybridzone/seqdata/vcf/map2mmur.gatk4.paired.joint/final/
+VCF_DIR=seqdata/vcf/map2mmur.gatk4.paired.joint/final/
 QC_DIR=analyses/qc/vcf/map2mmur.gatk4.paired.joint/
 RUN_BCF=TRUE
 RUN_BCF_BY_IND=FALSE
@@ -12,4 +12,7 @@ scripts/qc/qc_vcf.sh $FILE_ID $VCF_DIR $QC_DIR $RUN_BCF $RUN_BCF_BY_IND
 
 ################################################################################
 ################################################################################
-# rsync -r --verbose jwp37@dcc-slogin-02.oit.duke.edu:/datacommons/yoderlab/users/jelmer/radseq/analyses/qc/vcf/map2msp3.gatk4.paired.joint/ /home/jelmer/Dropbox/sc_lemurs/radseq/analyses/qc/vcf/
+# rsync -avr dcc:~/dc/proj/hybridzone/analyses/qc/vcf/map2mmur.gatk4.paired.joint/ ~/Dropbox/sc_lemurs/proj/hybridzone/analyses/qc/vcf/
+
+VCF=seqdata/vcf/gatk/final/hzproj1.mac1.FS6.vcf.gz
+vcftools --gzvcf $VCF --idepth

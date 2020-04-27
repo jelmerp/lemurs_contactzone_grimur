@@ -30,7 +30,7 @@ col.hyb <- 'grey50'
 ################################################################################
 ##### SET-UP - ADMIXTURE #####
 ################################################################################
-source('/home/jelmer/Dropbox/sc_lemurs/scripts/admixture/admixture_plot_fun.R')
+source('/home/jelmer/Dropbox/scripts/genomics/admixture/admixture_plot_fun.R')
 indir.admix <- 'analyses/admixture/output/'
 setID <- 'r03.all.mac3.FS6'
 
@@ -89,7 +89,7 @@ p_admix <- ggarrange(p_cv, p_k, nrow = 2, heights = c(0.4, 0.6))
 ################################################################################
 ##### SET-UP - PCA #####
 ################################################################################
-source('/home/jelmer/Dropbox/sc_lemurs/scripts/PCA/PCA_R_fun.R')
+source('/home/jelmer/Dropbox/scripts/genomics/PCA/PCA_R_fun.R')
 
 fileID <- 'r03.all.mac1.FS6'
 ID.type <- 'ID.short'

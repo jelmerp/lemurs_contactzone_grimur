@@ -24,7 +24,7 @@ INDFILE=analyses/admixtools/input/indfile_$FILE_ID.txt
 POPFILE=analyses/admixtools/input/popfile_dstat_hzproj1.$RUN_ID.txt
 ID_COLUMN=ID.short
 GROUPBY=supersite2
-/datacommons/yoderlab/users/jelmer/scripts/admixtools/admixtools_pip.sh $FILE_ID $RUN_ID $VCF_DIR $PLINK_DIR $ATOOLS_DIR $INDFILE $POPFILE \
+/datacommons/yoderlab/users/jelmer/scripts/genomics/admixtools/admixtools_pip.sh $FILE_ID $RUN_ID $VCF_DIR $PLINK_DIR $ATOOLS_DIR $INDFILE $POPFILE \
 	$VCF2PLINK $CREATE_INDFILE $SUBSET_INDFILE $ATOOLS_MODE $INDS_METADATA $ID_COLUMN $GROUPBY
 
 ## F4-ratio-mode:
@@ -33,7 +33,7 @@ RUN_ID=bySupersite2
 VCF2PLINK=FALSE
 INDFILE=analyses/admixtools/input/indfile_$FILE_ID.txt
 POPFILE=analyses/admixtools/input/popfile_f4ratio_hzproj1.$RUN_ID.txt
-/datacommons/yoderlab/users/jelmer/scripts/admixtools/admixtools_pip.sh $FILE_ID $RUN_ID $VCF_DIR $PLINK_DIR $ATOOLS_DIR $INDFILE $POPFILE \
+/datacommons/yoderlab/users/jelmer/scripts/genomics/admixtools/admixtools_pip.sh $FILE_ID $RUN_ID $VCF_DIR $PLINK_DIR $ATOOLS_DIR $INDFILE $POPFILE \
 	$VCF2PLINK $CREATE_INDFILE $SUBSET_INDFILE $ATOOLS_MODE $INDS_METADATA $ID_COLUMN $GROUPBY
 
 
@@ -41,7 +41,7 @@ POPFILE=analyses/admixtools/input/popfile_f4ratio_hzproj1.$RUN_ID.txt
 ################################################################################
 ################################################################################
 # rsync -avr --no-perms /home/jelmer/Dropbox/sc_lemurs/hybridzone/scripts/ jwp37@dcc-slogin-02.oit.duke.edu:/datacommons/yoderlab/users/jelmer/hybridzone/scripts/
-# rsync -avr --no-perms /home/jelmer/Dropbox/sc_lemurs/scripts/ jwp37@dcc-slogin-02.oit.duke.edu:/datacommons/yoderlab/users/jelmer/scripts/
+# rsync -avr --no-perms /home/jelmer/Dropbox/scripts/genomics/ jwp37@dcc-slogin-02.oit.duke.edu:/datacommons/yoderlab/users/jelmer/scripts/genomics/
 
 # rsync -avr --no-perms /home/jelmer/Dropbox/sc_lemurs/hybridzone/metadata/* jwp37@dcc-slogin-02.oit.duke.edu:/datacommons/yoderlab/users/jelmer/hybridzone/metadata/
 # rsync -avr --no-perms /home/jelmer/Dropbox/sc_lemurs/radseq/metadata/* jwp37@dcc-slogin-02.oit.duke.edu:/datacommons/yoderlab/users/jelmer/radseq/metadata/
@@ -58,5 +58,5 @@ POPFILE=analyses/admixtools/input/popfile_f4ratio_hzproj1.$RUN_ID.txt
 # INDFILE_ID=msp3
 # POPFILE_ID=f3stat_$INDFILE_ID
 # ATOOLS_MODE=F3
-# /datacommons/yoderlab/users/jelmer/scripts/admixtools/admixtools_pip.sh $FILE_ID $VCF_DIR $PLINK_DIR $ATOOLS_DIR $INDFILE_ID $POPFILE_ID \
+# /datacommons/yoderlab/users/jelmer/scripts/genomics/admixtools/admixtools_pip.sh $FILE_ID $VCF_DIR $PLINK_DIR $ATOOLS_DIR $INDFILE_ID $POPFILE_ID \
 #	$VCF2PLINK $CREATE_INDFILE $SUBSET_INDFILE $ATOOLS_MODE $INDS_METADATA

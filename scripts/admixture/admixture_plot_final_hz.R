@@ -3,7 +3,7 @@
 ################################################################################
 ## Libraries and scripts:
 library(here)
-source('/home/jelmer/Dropbox/sc_lemurs/scripts/admixture/admixture_plot_fun.R')
+source('/home/jelmer/Dropbox/scripts/genomics/admixture/admixture_plot_fun.R')
 
 ## SetID:
 setID <- 'r03.all.mac3.FS6'
