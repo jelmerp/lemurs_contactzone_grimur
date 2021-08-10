@@ -1,86 +1,59 @@
-################################################################################
-##### SET-UP #####
-################################################################################
-setwd('/home/jelmer/Dropbox/sc_lemurs/hybridzone//')
+## NOTE THAT TWO SAMPLES WERE SEQUENCED TWICE IN R03: mmur045 & mmur052
+
+# SET-UP -----------------------------------------------------------------------
+
+## Packages
+library(here)
 library(tidyverse)
+library(readxl)
 
-## Files:
-infile_lookup <- '/home/jelmer/Dropbox/sc_lemurs/radseq/metadata/lookup_IDshort.txt'
-infile_focInds <- 'analyses/qc/vcf/map2mmur.gatk4.paired.joint/filtering/r03.wOutgroups.FS6_indlist.txt'
+## Input files - RADseq metadata:
+infile_lookup_short <- here("metadata/links/lookup_IDshort.txt")   # General mouse lemur RADseq lookup table 1
+infile_lookup_long <- here("metadata/links/lookup_IDlong.txt")     # General mouse lemur RADseq lookup table 2
+infile_sites <- here("metadata/links/sites_pops.txt")
+infile_labwork <- here("metadata/labwork/JoergSamples_sequenced.xls")
 
-outfile_lookup <- 'metadata/lookup_r03.wOutgroups.FS6.txt'
+## Input files - focal samples:
+infile_IDs_r03 <- here("metadata/samplelists/sampleIDsShort_r03.txt")
+infile_IDs_add <- here("metadata/samplelists/hzproj_add-to-r03_IDs.txt")
 
-outfile_indsel1 <- 'metadata/indSel/r03.wOutgroups.indsel1.txt'
-outfile_indsel2 <- 'metadata/indSel/r03.wOutgroups.indsel2.txt'
-outfile_indsel3 <- 'metadata/indSel/r03.wOutgroups.indsel3.txt'
+## Output files:
+outfile_lookup_short <- here("metadata/hzlookup_bysample.txt")
+outfile_lookup_long <- here("metadata/hzlookup_bylibrary.txt")
 
-
-################################################################################
-##### CREATE LOOKUP #####
-################################################################################
-## Focal inds:
-focInds <- readLines(infile_focInds)
-focInds.short <- substr(focInds, 1, 7)
-
-## Metadata master file:
-lookup <- read.delim(infile_lookup, header = TRUE, as.is = TRUE) %>%
-  filter(ID.short %in% focInds.short) %>%
-  arrange(ID.short) %>%
-  mutate(ID = focInds) %>%
-  select(ID, ID.short, Sample_ID, species.short, site, spSite, supersite)
-
-## Supersite ID for all:
-lookup$supersite[which(is.na(lookup$supersite))] <- lookup$spSite[which(is.na(lookup$supersite))]
-table(lookup$supersite)
-
-## supersite2:
-lookup$supersite2 <- lookup$supersite
-lookup$supersite2[which(lookup$supersite == 'mmur_sw')] <- NA
-lookup$supersite2[which(lookup$species.short == 'mman')] <- NA
-lookup$supersite2[which(lookup$supersite == 'mgri_beza')] <- NA
-#lookup$supersite2[which(lookup$species.short == 'mhyb')] <- NA
-lookup$supersite2 <- gsub('mgan_Mandena', 'mmur_gan', lookup$supersite2)
-lookup$supersite2 <- gsub('mruf_Ranomafana', 'mruf', lookup$supersite2)
-lookup$supersite2 <- gsub('mgri_hybridzone', 'mgri_hz', lookup$supersite2)
-lookup$supersite2 <- gsub('mmur_hybridzone', 'mmur_hz', lookup$supersite2)
-lookup$supersite2 <- gsub('mhyb_hybridzone', 'mhyb_hz', lookup$supersite2)
-
-cat('Table of supersite2 variable:\n')
-table(lookup$supersite2)
+## Read input files:
+lookup_short_raw <- read.delim(infile_lookup_short, as.is = TRUE)
+lookup_long <- read.delim(infile_lookup_long, as.is = TRUE) %>%
+  rename(ID_short = ID.short)
+sites <- read.delim(infile_sites, sep = ",", as.is = TRUE)
+inds <- sort(c(readLines(infile_IDs_r03), readLines(infile_IDs_add)))
+labwork <- read_xls(infile_labwork) %>%
+  select(ID, sp_msat_nuc, sp_mtDNA, sp_msat_overall)
 
 
-################################################################################
-##### ADD QC #####
-################################################################################
-infile_imiss <- 'analyses/qc/vcf/map2mmur.gatk4.paired.joint/vcftools/r03.wOutgroups.mac1.FS6.imiss'
-imiss <- read.delim(infile_imiss, as.is = TRUE,
-                    col.names = c('ID', 'nSNPs', 'nFilt', 'nMiss', 'perc.miss')) %>%
-  select(ID, perc.miss) %>%
-  mutate(perc.miss = round(perc.miss * 100, 3)) %>%
-  filter(ID %in% lookup$ID) # mgri100
+# LOOKUP - ID_short ------------------------------------------------------------
 
-infile_idepth <- 'analyses/qc/vcf/map2mmur.gatk4.paired.joint/vcftools/r03.wOutgroups.mac1.FS6.idepth'
-idepth <- read.delim(infile_idepth, as.is = TRUE,
-                     col.names = c('ID', 'nSites', 'depth')) %>%
-  mutate(depth = round(depth, 2))
-qc <- merge(idepth, imiss, by = 'ID')
+## Process and merge input files
+lookup_short <- lookup_short_raw %>%
+  filter(ID %in% inds) %>%
+  merge(., sites, by = c("site", "sp"), all.x = TRUE) %>%
+  rename(pop = pop2) %>%
+  replace_na(list(poptype = "allopatric")) %>%
+  arrange(ID) %>%
+  select(ID, Sample_ID, species, sp, seqruns, site, pop, poptype) %>%
+  merge(., labwork, by = "ID")
 
-lookup.qc <- merge(lookup, qc, by = 'ID')
-head(lookup.qc)
+## Write output file
+write.table(lookup_short, outfile_lookup_short,
+            sep = "\t", quote = FALSE, row.names = FALSE)
 
 
-################################################################################
-##### WRITE FILES #####
-################################################################################
-write.table(lookup.qc, outfile_lookup, sep = '\t', quote = FALSE, row.names = FALSE)
+# LOOKUP - ID_long -------------------------------------------------------------
 
-## Indsel:
-indsel1 <- lookup %>% filter(!is.na(supersite2)) %>% pull(ID) # Excludes mman, Beza, mmur-Vohimena
-indsel2 <- indsel1[-which(indsel1 == 'mruf007_r01_p3d12')] # no rufus outgroup, for e.g. ADMIXTURE
-indsel3 <- c(indsel2, 'mgri100', # present in mac1 not in mac3
-             'mruf003', 'mruf007', 'mruf008')
-             #'mtan002', 'mtan005', 'mtan007') # for new VCF
+lookup_long <- lookup_long %>%
+  filter(ID_short %in% inds) %>%
+  arrange(ID)
 
-writeLines(indsel1, outfile_indsel1)
-writeLines(indsel2, outfile_indsel2)
-writeLines(indsel3, outfile_indsel3)
+## Write output file
+write.table(lookup_long, outfile_lookup_long,
+            sep = "\t", quote = FALSE, row.names = FALSE)
