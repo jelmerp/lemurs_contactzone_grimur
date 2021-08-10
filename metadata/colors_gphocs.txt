@@ -1,0 +1,10 @@
+pop	col	alpha
+murE	#FF00FF	1
+murC	#FF00FF	1
+murW	#FF00FF	1
+griC	#D69B12	1
+griW	#D69B12	1
+A	#f9b1b7	0.5
+B	#f9b1b7	0.5
+C	#f2d693	0.5
+root	#FF6A76	0.3
