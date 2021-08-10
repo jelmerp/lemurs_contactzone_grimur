@@ -1,0 +1,5 @@
+name: plink-env
+channels:
+  - bioconda
+dependencies:
+  - plink=1.90b4

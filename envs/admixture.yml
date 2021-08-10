@@ -1,0 +1,5 @@
+name: admixture-env
+channels:
+  - bioconda
+dependencies:
+  - admixture=1.3.0
