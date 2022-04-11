@@ -1,22 +1,19 @@
-## Prep input
-FILE_ID="r03.wOutgroups.hz.mur2gri2c"
-FASTA_DIR=/work/jwp37/hybridzone/seqdata/fasta_full//byLocus.final*mur2gri2c*
-GPHOCS_LOCUS_DIR=analyses/gphocs/input_prep."$FILE_ID"
-GPHOCS_INPUT_DIR=analyses/gphocs/input/
+#!/bin/bash
 
-sbatch -p yoderlab,common,scavenger -o slurm.gphocs1createLoci."$FILE_ID".txt \
-    /datacommons/yoderlab/users/jelmer/scripts/genomics/gphocs/gphocs_1_createLoci.sh "$FILE_ID" "$FASTA_DIR" "$GPHOCS_LOCUS_DIR" "$GPHOCS_INPUT_DIR"
+## Prep input file
+file_id="hz.mur3gri2c"
+fasta_dir=results/vcf2loci/
+gphocs_locus_dir=results/gphocs/input_prep."$file_id"
+gphocs_input_dir=results/gphocs/input/
+
+sbatch scripts/gphocs/01_gphocs_prepinput.sh \
+    "$file_id" "$fasta_dir" "$gphocs_locus_dir" "$gphocs_input_dir"
 
 ## Run GPhocs
-FILE_ID=hz.mur3gri2c
-DIR_FOCAL=results/gphocs/controlfiles/reps/"$FILE_ID"/
-NCORES=12
+file_id=hz.mur3gri2c
+dir_focal=results/gphocs/controlfiles/reps/"$file_id"/
+ncores=12
 
-for control_file in "$DIR_FOCAL"/"$FILE_ID"*ctrl; do
-
-    echo "$control_file"
-
-    sbatch -n $NCORES -o slurm.gphocs_run."$(basename "$control_file")" \
-        scripts/gphocs/02_gphocs_run.sh "$control_file" "$NCORES"
-
+for control_file in "$dir_focal"/"$file_id"*ctrl; do
+    sbatch scripts/gphocs/02_gphocs_run.sh "$control_file" "$ncores"
 done

@@ -3,10 +3,9 @@
 set -euo pipefail
 
 # SET-UP -----------------------------------------------------------------------
-
-## Scripts:
+## Scripts
 SCRIPT_VCF2PLINK=scripts/conversion/vcf2plink.sh
-SCRIPT_ADMIX_RUN=scripts/admixture/admixture_run.sh
+SCRIPT_ADMIX_RUN=scripts/admixture/admixture.sh
 
 ## Positional args:
 ID_IN=$1

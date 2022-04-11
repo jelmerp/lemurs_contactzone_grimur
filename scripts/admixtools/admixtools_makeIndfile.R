@@ -1,8 +1,8 @@
 #!/usr/bin/env Rscript
 
 #### SET-UP --------------------------------------------------------------------
-cat("\n#####################################################################\n")
-cat("#### admixtools_makeIndfile.R: Starting with script.\n")
+cat("\n----------------------\n")
+cat("## Starting with script admixtools_makeIndfile.R\n")
 
 library(tidyverse)
 options(warn = 1)
@@ -14,16 +14,11 @@ indfile.out <- args[3]
 IDcolumn <- args[4]
 groupby <- args[5]
 
-# inds.focal.file <- 'indlist.borsim.all.mac1.FS6.tmp'
-# inds.metadata.file <- '/datacommons/yoderlab/users/jelmer/proj/sisp/metadata/lookup_ext.txt'
-# IDcolumn <- 'ID'
-# groupby <- 'pop'
-
-cat('#### admixtools_makeIndfile.R: inds.focal.file:', inds.focal.file, '\n')
-cat('#### admixtools_makeIndfile.R: inds.metadata.file:', inds.metadata.file, '\n')
-cat('#### admixtools_makeIndfile.R: indfile.out:', indfile.out, '\n')
-cat('#### admixtools_makeIndfile.R: ID column:', IDcolumn, '\n')
-cat('#### admixtools_makeIndfile.R: groupby column:', groupby, '\n')
+cat('## inds.focal.file:', inds.focal.file, '\n')
+cat('## inds.metadata.file:', inds.metadata.file, '\n')
+cat('## indfile.out:', indfile.out, '\n')
+cat('## ID column:', IDcolumn, '\n')
+cat('## groupby column:', groupby, '\n')
 
 
 #### CREATE INPUT FILE ---------------------------------------------------------
@@ -48,10 +43,10 @@ indfile.df <- indfile.df %>% arrange(group)
 
 
 #### REPORT AND WRITE FILE -----------------------------------------------------
-cat('#### admixtools_makeIndfile.R: Resulting indfile.df:\n')
+cat('## Resulting indfile.df:\n')
 print(indfile.df)
 
 write.table(indfile.df, indfile.out,
             sep = '\t', quote = FALSE, row.names = FALSE, col.names = FALSE)
 
-cat('\n\n#### admixtools_makeIndfile.R: Done with script.\n')
+cat('\n\n## Done with script.\n')

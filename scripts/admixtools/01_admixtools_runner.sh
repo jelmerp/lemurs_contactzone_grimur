@@ -1,157 +1,120 @@
 #!/bin/bash
-set -e
-set -o pipefail
-set -u
 
-################################################################################
-#### SET-UP ####
-################################################################################
-## Software and scripts:
-SCRIPT_PREPINPUT=scripts/genomics/admixtools/admixtools_prepInput.sh
-SCRIPT_ATOOLS=scripts/genomics/admixtools/admixtools_run.sh
+set -euo pipefail
+
+# SET-UP --------------------------------------------------------------------
+## Software and scripts
+SCRIPT_PREPINPUT=scripts/admixtools/admixtools_prepInput.sh
+SCRIPT_ATOOLS=scripts/admixtools/admixtools.sh
 
 ## Positional args:
-FILE_ID=$1
+file_id=$1
 shift
-RUN_ID=$1
+run_id=$1
 shift
-VCF_DIR=$1
+vcf_dir=$1
 shift
-PLINK_DIR=$1
+plink_dir=$1
 shift
-ATOOLS_DIR=$1
+atools_dir=$1
 shift
-INDFILE=$1
+indfile=$1
 shift
-POPFILE=$1
+popfile=$1
 shift
-VCF2PLINK=$1
+vcf2plink=$1
 shift
-CREATE_INDFILE=$1
+create_indfile=$1
 shift
-SUBSET_INDFILE=$1
+subset_indfile=$1
 shift
-ATOOLS_MODE=$1
+atools_mode=$1
 shift
-INDS_METADATA=$1
+inds_metadata=$1
 shift
-ID_COLUMN=$1
+id_column=$1
 shift
-GROUPBY=$1
+groupby=$1
 
-## Process:
-FILE_ID_FULL=${FILE_ID}$RUN_ID
+## Process parameters
+file_id_full=${file_id}$run_id
 
-INDIR=$ATOOLS_DIR/input/
-OUTDIR=$ATOOLS_DIR/output/
-OUTDIR_RAW=$ATOOLS_DIR/output/raw/
+indir=$atools_dir/input/
+outdir=$atools_dir/output/
 
-[[ $ATOOLS_MODE == "D" ]] && PARFILE=$INDIR/parfile_dmode_$FILE_ID_FULL.txt
-[[ $ATOOLS_MODE == "F4" ]] && PARFILE=$INDIR/parfile_f4mode_$FILE_ID_FULL.txt
-[[ $ATOOLS_MODE == "F3" ]] && PARFILE=$INDIR/parfile_f3_$FILE_ID_FULL.txt
-[[ $ATOOLS_MODE == "F4RATIO" ]] && PARFILE=$INDIR/parfile_f4ratio_$FILE_ID_FULL.txt
+[[ $atools_mode == "D" ]] && parfile=$indir/parfile_dmode_$file_id_full.txt
+[[ $atools_mode == "F4RATIO" ]] && parfile=$indir/parfile_f4ratio_$file_id_full.txt
 
-[[ ! -d $ATOOLS_DIR/input ]] && mkdir -p $ATOOLS_DIR/input
-[[ ! -d $ATOOLS_DIR/output/raw ]] && mkdir -p $ATOOLS_DIR/output/raw
-[[ ! -d $PLINK_DIR ]] && mkdir -p $PLINK_DIR
+mkdir -p "$atools_dir"/input "$atools_dir"/output/raw "$plink_dir"
 
 ## Report:
-echo -e "\n\n###################################################################"
+echo
+echo "## Starting script."
 date
-echo "#### admixtools_pip.sh: Starting script."
-echo "#### admixtools_pip.sh: File ID: $FILE_ID"
-echo "#### admixtools_pip.sh: Run ID: $RUN_ID"
-echo "#### admixtools_pip.sh: VCF dir: $VCF_DIR"
-echo "#### admixtools_pip.sh: PLINK dir: $PLINK_DIR"
-echo "#### admixtools_pip.sh: Create indfile (TRUE/FALSE): $CREATE_INDFILE"
-echo "#### admixtools_pip.sh: Subset indfile (TRUE/FALSE): $SUBSET_INDFILE"
-printf "\n"
-echo "#### admixtools_pip.sh: Admixtools mode: $ATOOLS_MODE"
-printf "\n"
-echo "#### admixtools_pip.sh: Metadata file: $INDS_METADATA"
-echo "#### admixtools_pip.sh: ID column: $ID_COLUMN"
-echo "#### admixtools_pip.sh: Group-by column: $GROUPBY"
-printf "\n"
-echo "#### admixtools_pip.sh: Indfile (output): $INDFILE"
-echo "#### admixtools_pip.sh: Popfile (input): $POPFILE"
-echo "#### admixtools_pip.sh: Parfile: $PARFILE"
-printf "\n"
+echo
+echo "## File ID:                      $file_id"
+echo "## Run ID:                       $run_id"
+echo "## VCF dir:                      $vcf_dir"
+echo "## PLINK dir:                    $plink_dir"
+echo "## Create indfile (TRUE/FALSE):  $create_indfile"
+echo "## Subset indfile (TRUE/FALSE):  $subset_indfile"
+echo
+echo "## Admixtools mode:              $atools_mode"
+echo
+echo "## Metadata file:                $inds_metadata"
+echo "## ID column:                    $id_column"
+echo "## Group-by column:              $groupby"
+echo
+echo "## Indfile (output):             $indfile"
+echo "## Popfile (input):              $popfile"
+echo "## Parfile:                      $parfile"
+echo -e "--------------------\n"
 
 
-################################################################################
-#### PREP INPUT #####
-################################################################################
-echo "#### admixtools_pip.sh: Calling script to prep input files..."
-$SCRIPT_PREPINPUT $FILE_ID $VCF_DIR $PLINK_DIR $VCF2PLINK $CREATE_INDFILE $SUBSET_INDFILE \
-	$INDFILE $POPFILE $PARFILE $ATOOLS_MODE $INDS_METADATA $ID_COLUMN $GROUPBY
+# PREP INPUT -------------------------------------------------------------------
+echo "## Calling script to prep input files..."
+$SCRIPT_PREPINPUT "$file_id" "$vcf_dir" "$plink_dir" "$vcf2plink" \
+    "$create_indfile" "$subset_indfile" "$indfile" "$popfile" "$parfile" \
+    "$atools_mode" "$inds_metadata" "$id_column" "$groupby"
 
 
-################################################################################
-#### RUN ADMIXTOOLS #####
-################################################################################
-## D-mode:
-if [ $ATOOLS_MODE == "D" ]
-then
-	OUTPUT=$OUTDIR/$FILE_ID_FULL.dmode.out
+# RUN ADMIXTOOLS ---------------------------------------------------------------
+## D-mode
+if [ "$atools_mode" == "D" ]; then
 	
-	echo -e "\n#################################################################"
-	echo "#### admixtools_pip.sh: Running admixtools in D mode:"
-	echo "#### admixtools_pip.sh: Output: $OUTPUT"
+    output=$outdir/$file_id_full.dmode.out
 	
-	for POPFILE_LINE in $(seq 1 $(cat $POPFILE | wc -l))
-	do
-		echo -e "\n#### Line nr: $POPFILE_LINE"
-		head -n $POPFILE_LINE $POPFILE | tail -n 1
+	echo -e "\n## Running admixtools in D mode..."
+	echo "## Output: $output"
+	
+	for popfile_line in $(seq 1 "$(wc -l < "$popfile")"); do
 		
-		#sbatch -p yoderlab,common,scavenger --mem-per-cpu=12G -o slurm.admix.$FILE_ID.$POPFILE_LINE \
-		$SCRIPT_ATOOLS $FILE_ID_FULL $POPFILE_LINE $PARFILE $OUTPUT $ATOOLS_MODE
+        echo -e "\n#### Line nr: $popfile_line"
+		head -n "$popfile_line" "$popfile" | tail -n 1
+		
+		$SCRIPT_ATOOLS "$file_id_full" "$popfile_line" "$parfile" "$output" "$atools_mode"
 	done
 	
 	## Combine output into single file:
-	grep -h "result" $OUTPUT.line* > $OUTPUT
+	grep -h "result" "$output".line* > "$output"
 fi
 
-
-## F4-mode: ## HAVE YET TO IMPLEMENT THIS ##
-if [ $ATOOLS_MODE == "F4" ]
-then
-	echo -e "\n\n#### admixtools_pip.sh: F4-mode not yet implemented\n\n"
-	#echo "#### admixtools_pip.sh: Running admixtools in F4 mode:"
-	#OUTPUT=$OUTDIR/$FILE_ID_FULL.f4mode.out
-fi
+## F4-ratio-mode
+if [ "$atools_mode" == "F4RATIO" ]; then
 	
-
-## F3-mode:
-if [ $ATOOLS_MODE == "F3" ]
-then
-	OUTPUT=$OUTDIR/$FILE_ID_FULL.f3.out
-	POPFILE_LINE=ALL
-	echo "#### admixtools_pip.sh: Running admixtools in f3 mode:"
-	echo "#### admixtools_pip.sh: Output: $OUTPUT"
+    output=$outdir/$file_id_full.f4ratio.out
+	popfile_line=ALL
 	
-	$SCRIPT_ATOOLS $FILE_ID_FULL $POPFILE_LINE $PARFILE $OUTPUT $ATOOLS_MODE
+    echo "## Running admixtools in f4ratio mode..."
+	echo "## Output: $output"
+	
+	"$SCRIPT_ATOOLS" "$file_id_full" "$popfile_line" "$parfile" "$output" "$atools_mode"
 fi
 
 
-## F4-ratio-mode:
-if [ $ATOOLS_MODE == "F4RATIO" ]
-then
-	OUTPUT=$OUTDIR/$FILE_ID_FULL.f4ratio.out
-	POPFILE_LINE=ALL
-	echo "#### admixtools_pip.sh: Running admixtools in f4ratio mode:"
-	echo "#### admixtools_pip.sh: Output: $OUTPUT"
-	
-	$SCRIPT_ATOOLS $FILE_ID_FULL $POPFILE_LINE $PARFILE $OUTPUT $ATOOLS_MODE
-fi
-
-
-################################################################################
-#### HOUSEKEEPING #####
-################################################################################
-## Report:
-echo -e "\n\n#### admixtools_pip.sh: Admixtools output: $OUTPUT"
-cat $OUTPUT
-printf "\n"
-
-echo "#### admixtools_pip.sh: Done with script."
+# WRAP UP ----------------------------------------------------------------------
+echo -e "\n## Admixtools output: $output"
+cat "$output"
+echo -e "\n## Done with script."
 date
+echo

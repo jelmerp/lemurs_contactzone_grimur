@@ -1,19 +1,14 @@
 #!/bin/bash
-set -e
-set -o pipefail
-set -u
 
-################################################################################
-#### SET-UP #####
-################################################################################
-## Software:
-BCFTOOLS=/datacommons/yoderlab/programs/bcftools-1.10.2/bcftools
-VCF2PLINK_SCRIPT=/datacommons/yoderlab/users/jelmer/scripts/genomics/conversion/vcf2plink.sh
-SPLITVCF_SCRIPT=/datacommons/yoderlab/users/jelmer/scripts/genomics/conversion/splitVCF_byIndv.sh
-MAKE_INDFILE_SCRIPT=/datacommons/yoderlab/users/jelmer/scripts/genomics/admixtools/admixtools_makeIndfile.R
-module load R/3.4.4
+set -euo pipefail
 
-## Command-line args:
+# SETUP ------------------------------------------------------------------------
+## Software
+BCFTOOLS=software/bcftools-1.10.2/bcftools
+VCF2PLINK_SCRIPT=scripts/conversion/vcf2plink.sh
+MAKE_INDFILE_SCRIPT=scripts/admixtools/admixtools_makeIndfile.R
+
+## Command-line args
 FILE_ID=$1
 shift
 VCF_DIR=$1
@@ -41,33 +36,33 @@ shift
 GROUPBY=$1
 shift
 
-## Process:
+## Process parameters
 VCF=$VCF_DIR/$FILE_ID.vcf.gz # input file
 PEDFILE=$PLINK_DIR/$FILE_ID.ped 
 MAPFILE=$PLINK_DIR/$FILE_ID.map
 
-## Report:
-echo -e "\n#####################################################################"
+## Report
+echo "## Starting with script."
 date
-echo "#### admixtools_prepinput.sh: Starting with script."
-echo "#### admixtools_prepinput.sh: File ID: $FILE_ID"
-echo "#### admixtools_prepinput.sh: VCF dir: $VCF_DIR"
-echo "#### admixtools_prepinput.sh: PLINK dir: $PLINK_DIR"
-echo "#### admixtools_prepinput.sh: Create indfile (TRUE/FALSE): $CREATE_INDFILE"
-echo "#### admixtools_prepinput.sh: Subset indfile (TRUE/FALSE): $SUBSET_INDFILE"
+echo
+echo "## File ID: $FILE_ID"
+echo "## VCF dir: $VCF_DIR"
+echo "## PLINK dir: $PLINK_DIR"
+echo "## Create indfile (TRUE/FALSE): $CREATE_INDFILE"
+echo "## Subset indfile (TRUE/FALSE): $SUBSET_INDFILE"
 printf "\n"
-echo "#### admixtools_prepinput.sh: VCF file (input): $VCF"
-echo "#### admixtools_prepinput.sh: Popfile (input): $POPFILE"
-echo "#### admixtools_prepinput.sh: Indfile (output): $INDFILE"
-echo "#### admixtools_prepinput.sh: Parfile (output): $PARFILE"
-echo "#### admixtools_prepinput.sh: PED file (output): $PEDFILE"
-echo "#### admixtools_prepinput.sh: MAP file (output): $MAPFILE"
+echo "## VCF file (input): $VCF"
+echo "## Popfile (input): $POPFILE"
+echo "## Indfile (output): $INDFILE"
+echo "## Parfile (output): $PARFILE"
+echo "## PED file (output): $PEDFILE"
+echo "## MAP file (output): $MAPFILE"
 printf "\n"
-echo "#### admixtools_prepinput.sh: Admixtools mode: $ATOOLS_MODE"
+echo "## Admixtools mode: $ATOOLS_MODE"
 printf "\n"
-echo "#### admixtools_prepinput.sh: Inds metadata (optional): $INDS_METADATA"
-echo "#### admixtools_prepinput.sh: ID column: $ID_COLUMN"
-echo "#### admixtools_prepinput.sh: Group-by column: $GROUPBY"
+echo "## Inds metadata (optional): $INDS_METADATA"
+echo "## ID column: $ID_COLUMN"
+echo "## Group-by column: $GROUPBY"
 printf "\n"
 
 
@@ -76,16 +71,15 @@ printf "\n"
 ################################################################################
 if [ $VCF2PLINK == TRUE ]
 then
-	echo "#### admixtools_prepinput.sh: Converting vcf to plink..."
+	echo "## Converting vcf to plink..."
 	MAF=0
 	LD_MAX=1
 	SELECT_INDS=FALSE
 	INDFILE_PLINK="NA"
 	ID_OUT="NA"
 	$VCF2PLINK_SCRIPT $FILE_ID $VCF_DIR $PLINK_DIR $MAF $LD_MAX $SELECT_INDS $INDFILE_PLINK $ID_OUT
-	printf "\n\n"
 else
-	echo -e "\n#### admixtools_prepinput.sh: Not converting vcf to plink.\n"
+	echo -e "\n## Not converting vcf to plink.\n"
 fi
 
 
@@ -94,9 +88,9 @@ fi
 ################################################################################
 if [ $CREATE_INDFILE == TRUE ]
 then
-	echo "#### admixtools_prepinput.sh: Creating eigenstat indfile..."
-	echo "#### admixtools_prepinput.sh: Inds metadata: $INDS_METADATA"
-	echo "#### admixtools_prepinput.sh: Indfile: $INDFILE"
+	echo "## Creating eigenstat indfile..."
+	echo "## Inds metadata: $INDS_METADATA"
+	echo "## Indfile: $INDFILE"
 	
 	INDLIST=indlist.$FILE_ID.tmp
 	$BCFTOOLS query -l $VCF > $INDLIST
@@ -105,7 +99,7 @@ then
 	
 	rm $INDLIST
 else
-	echo -e "\n#### admixtools_prepinput.sh: NOT CREATING EIGENSTAT INDFILE.\n"
+	echo -e "\n## NOT CREATING EIGENSTAT INDFILE.\n"
 fi
 
 
@@ -116,7 +110,7 @@ fi
 
 if [ $SUBSET_INDFILE == TRUE ]
 then
-	echo -e "\n\n#### admixtools_prepinput.sh: Subsetting Eigenstat indfile..."
+	echo -e "\n\n## Subsetting Eigenstat indfile..."
 	NLINE_IN=$(cat $INDFILE | wc -l)
 	
 	INDS=( $($BCFTOOLS query -l $VCF) )
@@ -126,9 +120,9 @@ then
 	rm $INDFILE.tmp
 	
 	NLINE_OUT=$(cat $INDFILE | wc -l)
-	echo -e "#### admixtools_prepinput.sh: Nr of lines before subsetting: $NLINE_IN"
-	echo -e "#### admixtools_prepinput.sh: Nr of lines after subsetting: $NLINE_OUT \n"
-	[[ $NLINE_OUT == 0 ]] && echo -e "\n\n\n\n#### admixtools_prepinput.sh: ERROR: NO LINES LEFT IN INDFILE!\n\n\n\n"
+	echo -e "## Nr of lines before subsetting: $NLINE_IN"
+	echo -e "## Nr of lines after subsetting: $NLINE_OUT \n"
+	[[ $NLINE_OUT == 0 ]] && echo -e "\n\n\n\n## ERROR: NO LINES LEFT IN INDFILE!\n\n\n\n"
 fi
 
 
@@ -136,11 +130,11 @@ fi
 #### CREATE EIGENSTAT PARFILES #####
 ################################################################################
 echo -e "\n#####################################################################"
-echo "#### admixtools_prepinput.sh: Creating Eigenstat parfile..."
+echo "## Creating Eigenstat parfile..."
 
 if [ $ATOOLS_MODE == "D" ]
 then
-	echo -e "\n#### admixtools_prepinput.sh: Creating parfile for D-mode...\n"
+	echo -e "\n## Creating parfile for D-mode...\n"
 		
 	printf "genotypename:\t$PEDFILE\n" > $PARFILE
 	printf "snpname:\t$MAPFILE\n" >> $PARFILE
@@ -148,7 +142,7 @@ then
 	printf "popfilename:\t$POPFILE\n" >> $PARFILE
 	printf "printsd:\tYES\n" >> $PARFILE
 	
-	echo "#### admixtools_prepinput.sh: Parfile $PARFILE:"
+	echo "## Parfile $PARFILE:"
 	cat $PARFILE
 	printf "\n"
 	
@@ -159,13 +153,13 @@ then
 	#cp $PARFILE_DMODE $PARFILE_FMODE ### EDIT!
 	printf "f4mode:\tYES\n" >> $PARFILE_FMODE
 	
-	echo -e "\n#### admixtools_prepinput.sh: Parfile $PARFILE:"
+	echo -e "\n## Parfile $PARFILE:"
 	cat $PARFILE
 	printf "\n"
 	
 elif [ $ATOOLS_MODE == F3 ]
 then
-	echo "\n#### admixtools_prepinput.sh: Creating parfile for f3-mode...\n"
+	echo "\n## Creating parfile for f3-mode...\n"
 	
 	printf "genotypename:\t$PEDFILE\n" > $PARFILE
 	printf "snpname:\t$MAPFILE\n" >> $PARFILE
@@ -173,14 +167,14 @@ then
 	printf "popfilename:\t$POPFILE\n" >> $PARFILE
 	#printf "printsd:\tYES\n" >> $PARFILE
 	
-	echo "#### admixtools_prepinput.sh: Parfile $PARFILE:"
+	echo "## Parfile $PARFILE:"
 	cat $PARFILE
 	printf "\n"
 	
 elif [ $ATOOLS_MODE == F4RATIO ]
 then
-	echo -e "\n#### admixtools_prepinput.sh: Creating parfile for f4-ratio-mode...\n"
-	echo "#### admixtools_prepinput.sh: Creating parfile $PARFILE..."
+	echo -e "\n## Creating parfile for f4-ratio-mode...\n"
+	echo "## Creating parfile $PARFILE..."
 	
 	printf "genotypename:\t$PEDFILE\n" > $PARFILE
 	printf "snpname:\t$MAPFILE\n" >> $PARFILE
@@ -188,16 +182,17 @@ then
 	printf "popfilename:\t$POPFILE\n" >> $PARFILE
 	printf "printsd:\tYES\n" >> $PARFILE
 	
-	echo "#### admixtools_prepinput.sh: Parfile $PARFILE:"
+	echo "## Parfile $PARFILE:"
 	cat $PARFILE
 	printf "\n"
 	
 else
-	echo -e "\n\n\n#### admixtools_prepinput.sh: ATOOLS_MODE variable $ATOOLS_MODE does not match any mode..."
-	echo -e "#### admixtools_prepinput.sh: NOT CREATING PARFILE...\n\n\n"
+	echo -e "\n\n\n## ATOOLS_MODE variable $ATOOLS_MODE does not match any mode..."
+	echo -e "## NOT CREATING PARFILE...\n\n\n"
 fi
 
 
-################################################################################
+# WRAP UP ----------------------------------------------------------------------
+echo -e "\n## Done with script.\n"
 date
-echo -e "\n#### admixtools_prepinput.sh: Done with script.\n"
+echo

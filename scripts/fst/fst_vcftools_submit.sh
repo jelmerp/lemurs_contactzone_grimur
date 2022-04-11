@@ -1,17 +1,14 @@
 #!/bin/bash
 
 # GENERAL SETTINGS -------------------------------------------------------------
-
-indir=results/geno/vcf/gatk
+indir=results/geno/vcf
 lookup=metadata/hzlookup_bysample.txt
 winsize=50000
 stepsize=50000
 
 # FOR CONTACT ZONE INDS ONLY ---------------------------------------------------
-
 ## Settings
 file_id=r03.all.mac1.FS6
-
 outdir=results/fst/output/"$file_id"
 popfile_dir=results/fst/input/"$file_id"
 popcombs_file=$popfile_dir/popcombs.txt # file with on each line a pair of pops to compute Fst for
@@ -38,10 +35,8 @@ while read -r pop1 pop2; do
 done <"$popcombs_file"
 
 # FOR ALL INDS -----------------------------------------------------------------
-
 ## Settings
 file_id=hzproj1.mac1.FS6
-
 lookup_allo=metadata/hzlookup_allopatric.txt
 outdir=results/fst/output/"$file_id"
 popfile_dir=results/fst/input/"$file_id"

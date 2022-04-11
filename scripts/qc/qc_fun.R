@@ -2,54 +2,54 @@
 ## Process a single file:
 read_flagstats <- function(ID, suffix, bamdir) {
 
-  infile_flagstats <- paste0(bamdir, '/', ID, suffix)
+  infile_flagstats <- paste0(bamdir, "/", ID, suffix)
 
   flagstats <- readLines(infile_flagstats)
 
-  n_tot <- as.integer(unlist(strsplit(flagstats[grep('in total', flagstats)], split = ' '))[1])
-  n_map <- as.integer(unlist(strsplit(flagstats[grep('mapped.*%', flagstats)], split = ' '))[1])
-  n_pr <- as.integer(unlist(strsplit(flagstats[grep('paired in sequencing', flagstats)], split = ' '))[1])
-  n_pp <- as.integer(unlist(strsplit(flagstats[grep('properly paired', flagstats)], split = ' '))[1])
+  n_tot <- as.integer(unlist(strsplit(flagstats[grep("in total", flagstats)], split = " "))[1])
+  n_map <- as.integer(unlist(strsplit(flagstats[grep("mapped.*%", flagstats)], split = " "))[1])
+  n_pr <- as.integer(unlist(strsplit(flagstats[grep("paired in sequencing", flagstats)], split = " "))[1])
+  n_pp <- as.integer(unlist(strsplit(flagstats[grep("properly paired", flagstats)], split = " "))[1])
 
   return(c(ID, n_tot, n_map, n_pr, n_pp))
 }
 
 ## Wrapper to process multiple files:
 read_flagstats_all <- function(IDs,
-                               bamdir = 'qc/bam/',
+                               bamdir = "qc/bam/",
                                suffix = ".samtools-flagstat.txt") {
   flagstats <- data.frame(
     do.call(rbind,
             lapply(IDs, read_flagstats, bamdir = bamdir, suffix = suffix)),
     stringsAsFactors = FALSE
   )
-  colnames(flagstats) <- c('ID', 'bam_tot', 'bam_map', 'bam_pr', 'bam_pp')
-  integer_cols <- c('bam_tot', 'bam_map', 'bam_pr', 'bam_pp')
+  colnames(flagstats) <- c("ID", "bam_tot", "bam_map", "bam_pr", "bam_pp")
+  integer_cols <- c("bam_tot", "bam_map", "bam_pr", "bam_pp")
   flagstats[, integer_cols] <- lapply(flagstats[, integer_cols], as.integer)
   return(flagstats)
 }
 
 #### PROCESS FASTQ STATS -------------------------------------------------------
 ## Process a single file:
-read_fqstats <- function(ID, read = 'R1', dir_fq) {
+read_fqstats <- function(ID, read = "R1", dir_fq) {
   #ID=mgri068_r03_p5a03; read = R1
 
-  infile_fq <- paste0(dir_fq, '/', ID, '.', read, '.fastqstats.txt')
+  infile_fq <- paste0(dir_fq, "/", ID, ".", read, ".fastqstats.txt")
   fqstats <- read.delim(infile_fq, header = FALSE, as.is = TRUE) %>%
-    filter(V1 %in% c('reads', 'len mean', '%dup', 'qual mean')) %>%
+    filter(V1 %in% c("reads", "len mean", "%dup", "qual mean")) %>%
     pull(V2)
   return(c(ID, read, fqstats))
 }
 
 ## Wrapper to process multiple files:
-read_fqstats_all <- function(IDs, read = 'R1', dir_fq) {
+read_fqstats_all <- function(IDs, read = "R1", dir_fq) {
   fqstats <- data.frame(
     do.call(rbind, lapply(IDs, read_fqstats, read = read, dir_fq)),
     stringsAsFactors = FALSE
     )
 
-  colnames(fqstats) <- c('ID', 'read', 'fq_reads', 'fq_meanlen',
-                            'fq_pct_dup', 'fq_qual')
+  colnames(fqstats) <- c("ID", "read", "fq_reads", "fq_meanlen",
+                            "fq_pct_dup", "fq_qual")
 
   fqstats$fq_reads <- as.integer(fqstats$fq_reads)
   fqstats$fq_meanlen <- round(as.numeric(fqstats$fq_meanlen), 2)
@@ -66,13 +66,13 @@ read_fqstats_all <- function(IDs, read = 'R1', dir_fq) {
 ## Process a single file:
 read_bamstats <- function(ID, bamdir, mycolnames, suffix) {
 
-  infile_bamstats <- paste0(bamdir, '/', ID, suffix)
+  infile_bamstats <- paste0(bamdir, "/", ID, suffix)
 
   bamstats <- read.delim(infile_bamstats, header = FALSE, as.is = TRUE, nrows = 42)
-  bamstats <- bamstats[1:which(bamstats$V1 == '%N'), ]
+  bamstats <- bamstats[1:which(bamstats$V1 == "%N"), ]
   bamstats_df <- setNames(data.frame(matrix(ncol = nrow(bamstats), nrow = 1)), bamstats$V1)
   bamstats_df[1, ] <- bamstats$V2
-  colnames(bamstats_df) <- colnames(bamstats_df) %>% gsub(' ', '_', .) %>% gsub('%', 'pct', .)
+  colnames(bamstats_df) <- colnames(bamstats_df) %>% gsub(" ", "_", .) %>% gsub("%", "pct", .)
 
   if(ncol(bamstats_df) < 42) {
     complete_df <- setNames(data.frame(matrix(ncol = 42, nrow = 0)), mycolnames)
@@ -91,7 +91,7 @@ read_bamstats <- function(ID, bamdir, mycolnames, suffix) {
 
 ## Wrapper to process multiple files:
 read_bamstats_all <- function(IDs, bamdir, mycolnames,
-                              suffix = '.ea-utils-samstats.txt') {
+                              suffix = ".ea-utils-samstats.txt") {
   bamstats <- as.data.frame(do.call(
     rbind,
     lapply(IDs, read_bamstats, bamdir = bamdir, mycolnames = mycolnames,
@@ -112,9 +112,9 @@ ggbox <- function(
   colby = NULL, colby_cols = NULL, colby_labs = NULL, colby_name = NULL,
   shapeby = NULL, shapeby_name = NULL,
   xlabs = NULL, ymax = NULL,
-  ytitle = '', xtitle = NULL, ptitle = NULL,
+  ytitle = "", xtitle = NULL, ptitle = NULL,
   saveplot = TRUE, openfig = FALSE,
-  figdir = 'analyses/qc/figs/', figname = NULL
+  figdir = "results/qc/figs/", figname = NULL
   ) {
 
   p <- ggplot(data = my_df) +
@@ -139,7 +139,7 @@ ggbox <- function(
       plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
       plot.title = element_text(hjust = 0.5, size = 18),
       legend.text = element_text(size = 12),
-      legend.title = element_text(size = 12, face = 'bold'),
+      legend.title = element_text(size = 12, face = "bold"),
       legend.text.align = 0
     )
 
@@ -150,10 +150,10 @@ ggbox <- function(
   if(!is.null(ptitle)) p <- p + ggtitle(ptitle)
 
   if(saveplot == TRUE) {
-    if(is.null(figname)) figfile <- paste0(figdir, '/', my_y, '.png')
-    if(!is.null(figname)) figfile <- paste0(figdir, '/', figfile, '.png')
+    if(is.null(figname)) figfile <- paste0(figdir, "/", my_y, ".png")
+    if(!is.null(figname)) figfile <- paste0(figdir, "/", figfile, ".png")
     ggsave(figfile, p, width = 6, height = 6)
-    if(openfig == TRUE) system(paste('xdg-open', figfile))
+    if(openfig == TRUE) system(paste("xdg-open", figfile))
   }
   return(p)
 }

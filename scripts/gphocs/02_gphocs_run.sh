@@ -1,61 +1,51 @@
 #!/bin/bash
-set -e
-set -o pipefail
-set -u
 
-################################################################################
-#### SET-UP ####
-################################################################################
-## Software:
-GPHOCS=/datacommons/yoderlab/programs/G-PhoCS/bin/G-PhoCS
+set -euo pipefail
 
-## Command-line args:
-CFILE=$1 # Path to control file
-NCORES=$2 # Number of cores to use
+# SET-UP -----------------------------------------------------------------------
+## Software
+GPHOCS=software/G-PhoCS/bin/G-PhoCS
 
-## Report:
-echo -e "\n#####################################################################"
+## Command-line args
+CFILE=$1        # Path to control file
+NCORES=$2       # Number of cores to use
+
+## Report
+echo "## Starting script 02_gphocs_run.sh"
 date
-echo "#### gphocs_run.sh: Starting script."
-echo "#### gphocs_run.sh: Control file: $CFILE"
-echo "#### gphocs_run.sh: Number of processors: $NCORES"
-printf "\n"
-echo "#### gphocs_run.sh: Slurm Job ID: $SLURM_JOB_ID"
-echo "#### gphocs_run.sh: Slurm Partition: $SLURM_JOB_PARTITION"
-echo "#### gphocs_run.sh: Slurm Node name: $SLURMD_NODENAME"
+echo
+echo "## Control file: $CFILE"
+echo "## Number of processors: $NCORES"
+echo
 
 ## Copying old logfile:
 LOGFILE=$(grep "trace-file" $CFILE | sed 's/trace-file //')
-echo -e "\n#### gphocs_run.sh: Logfile: $LOGFILE"
+echo -e "\n## Logfile: $LOGFILE"
 
-if [ -f $LOGFILE ]
-then
-	echo -e "#### gphocs_run.sh: Logfile exists: moving to $LOGFILE.autocopy...\n"
-	mv $LOGFILE $LOGFILE.autocopy.log
+if [ -f "$LOGFILE" ]; then
+	echo -e "## Logfile exists: moving to $LOGFILE.autocopy...\n"
+	mv "$LOGFILE" "$LOGFILE".autocopy.log
 fi
 
 ## Editing controlfile to include date:
-echo "#### gphocs_run.sh: Editing controlfile..."
+echo "## Editing controlfile..."
 DATE=$(date +%Y%m%d-%H%M)
-cp $CFILE $CFILE.tmp
-#cat $CFILE.tmp | sed -e "s/\(date[0-9]+\).*\.log/\1.$DATE.log/" > $CFILE
-cat $CFILE.tmp | sed -e "s/\(date[0-9][0-9][0-9][0-9][0-9][0-9]\).*log/\1.$DATE.log/" > $CFILE 
-rm $CFILE.tmp
+cp "$CFILE" "$CFILE".tmp
+sed -e "s/\(date[0-9][0-9][0-9][0-9][0-9][0-9]\).*log/\1.$DATE.log/" "$CFILE".tmp > "$CFILE" 
+rm "$CFILE".tmp
 
-echo -e "\n#### gphocs_run.sh: Showing top of controlfile:"
-head $CFILE
+echo -e "\n## Showing top of controlfile:"
+head "$CFILE"
 
 
-################################################################################
-#### RUN GPHOCS ####
-################################################################################
+# RUN GPHOCS -------------------------------------------------------------------
+echo -e "\n\n## Starting Gphocs run...\n"
+
 export OMP_NUM_THREADS=$NCORES
-
-echo -e "\n\n#### gphocs_run.sh: Starting Gphocs run...\n"
-$GPHOCS $CFILE -n $NCORES
+$GPHOCS "$CFILE" -n "$NCORES"
 
 
 ## Report:
-echo -e "\n#####################################################################"
-echo "#### gphocs_run.sh: Done with script."
+echo -e "## Done with script 02_gphocs_run.sh"
 date
+echo
